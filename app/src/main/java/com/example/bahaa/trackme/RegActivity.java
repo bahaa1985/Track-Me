@@ -1,5 +1,6 @@
 package com.example.bahaa.trackme;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -62,7 +63,7 @@ public class RegActivity extends AppCompatActivity {
         return isValidate;
     }
 
-    private static final Pattern passwordPattern=Pattern.compile("(?=.*[A-Za-z])(?=.*[0-9]).{6,}");
+    private static final Pattern passwordPattern=Pattern.compile("(?=.*[A-Za-z])(?=.*[0-9]).{4,}");
     private Boolean validatePassWord(){
         Boolean isValidate;
         if(!mEditPass.getText().toString().matches(passwordPattern.pattern())){
@@ -89,12 +90,14 @@ public class RegActivity extends AppCompatActivity {
     }
 
     public void buttonNext1_Click(View view) {
-        if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
-
-        }
-        else
-        {
-
-        }
+//        if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
+//
+//        }
+//        else
+//        {
+//
+//        }
+        Intent intent=new Intent(this,PhotoActivity.class);
+        startActivity(intent);
     }
 }

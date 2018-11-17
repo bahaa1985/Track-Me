@@ -6,5 +6,6 @@
     <string name="conPassStr">تأكيد كلمة المرور</string>
     <string name="emailStr">الإيميل</string>
     <string name="nextStr">التالي</string>
-    <string name="uploadStr">إرفع صورة</string>
+    <string name="uploadStr">او إرفع صورة</string>
+    <string name="pickStr">إختر صورة</string>
 </resources>
