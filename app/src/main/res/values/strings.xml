@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Track me</string>
+    <string name="nameStr">الإسم</string>
+    <string name="phoneStr">رقم الهاتف</string>
+    <string name="passStr">ادخل كلمة المرور</string>
+    <string name="conPassStr">تأكيد كلمة المرور</string>
+    <string name="emailStr">الإيميل</string>
+    <string name="nextStr">التالي</string>
+    <string name="uploadStr">إرفع صورة</string>
 </resources>
