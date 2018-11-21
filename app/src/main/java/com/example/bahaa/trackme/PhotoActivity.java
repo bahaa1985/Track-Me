@@ -44,4 +44,9 @@ public class PhotoActivity extends AppCompatActivity {
             Picasso.get().load(mImageUri).into(mImageUser);
         }
     }
+
+    public void buttonNext2_Click(View view) {
+        Intent intent=new Intent(this,ContactsActivity.class);
+        startActivity(intent);
+    }
 }

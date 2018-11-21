@@ -78,7 +78,10 @@ public class RegActivity extends AppCompatActivity {
     }
     private Boolean validateConPassWord(){
         Boolean isValidate;
-        if(mEditConPass.getText().toString()!=mEditPass.getText().toString()){
+        String pass,conPass;
+        pass=mEditConPass.getText().toString();
+        conPass=mEditPass.getText().toString();
+        if(!pass.equals(conPass)){
             isValidate=false;
             mEditConPass.setError("كلمة المرور غير مطابقة");
         }
@@ -90,14 +93,14 @@ public class RegActivity extends AppCompatActivity {
     }
 
     public void buttonNext1_Click(View view) {
-//        if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
-//
-//        }
-//        else
-//        {
-//
-//        }
-        Intent intent=new Intent(this,PhotoActivity.class);
-        startActivity(intent);
+        if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
+            Intent intent=new Intent(this,PhotoActivity.class);
+            startActivity(intent);
+        }
+        else
+        {
+
+        }
+
     }
 }
