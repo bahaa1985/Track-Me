@@ -8,4 +8,8 @@
     <string name="nextStr">التالي</string>
     <string name="uploadStr">او إرفع صورة</string>
     <string name="pickStr">إختر صورة</string>
+    <string name="title_activity_home_map">حدد موقع منزلك</string>
+    <string name="check_home_address">عنوانك الحالي هو:</string>
+    <string name="home_address">موقعك الحالي هو:</string>
+    <string name="home_ques">هل العلامة على الخريطة تشير لموقع منزلك؟ إن لم تكن كذلك قم بتحديد موقع منزلك من خلال الخريطة و النقر على الموقع فقط</string>
 </resources>
