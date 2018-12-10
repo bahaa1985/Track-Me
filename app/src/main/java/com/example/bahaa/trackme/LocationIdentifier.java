@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.webkit.WebSettings;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -30,7 +30,8 @@ public class LocationIdentifier extends FragmentActivity {
 
     private Context mContext;
     GoogleMap mMap;
-    Double longitude, latitude;
+    private Double longitude;
+    private Double latitude;
     private FusedLocationProviderClient mFusedLocationClient;
     boolean mLocationPermissionGranted;
     final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -60,14 +61,16 @@ public class LocationIdentifier extends FragmentActivity {
         // Add a marker in Sydney and move the camera
         Geocoder geocoder = new Geocoder(mContext);
         try {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, 15));
             List<Address> addressList =new ArrayList<>();
             addressList=geocoder.getFromLocation(home.latitude, home.longitude, 1);
-            Address address = addressList.get(0);
-//                            textViewAddress=findViewById(R.id.text_view_home);
-//                            textViewAddress.setText(textViewAddress.getText().toString()+" "+address.getAddressLine(0));
-            mMap.addMarker(new MarkerOptions().position(home).title(address.getAddressLine(0)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, 10));
-            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            String address_result="";
+            if(addressList.size()>0){
+                Address address = addressList.get(0);
+                address_result=address.getAddressLine(0);
+                Log.i("tag",address_result);
+            }
+            mMap.addMarker(new MarkerOptions().position(home).title(address_result));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -95,10 +98,10 @@ public class LocationIdentifier extends FragmentActivity {
                 public void onComplete(@NonNull Task task) {
                     if (task.getResult() != null && task.isSuccessful()) {
                         Location currentLocation=(Location) task.getResult();
-                        longitude = currentLocation.getLongitude();
-                        latitude = currentLocation.getLatitude();//
+                        setLongitude(currentLocation.getLongitude());
+                        setLatitude(currentLocation.getLatitude());//
                         // Add a marker in location and move the camera
-                        LatLng home = new LatLng(latitude,longitude);
+                        LatLng home = new LatLng(getLatitude(), getLongitude());
                         addMarkerinDeviceLocation(home);
                     }
                 }
@@ -107,5 +110,39 @@ public class LocationIdentifier extends FragmentActivity {
         else {
 
         }
+    }
+
+    public void geoLocationAddress(String search_string){
+        Geocoder geocoder=new Geocoder(mContext);
+
+        try {
+            List<Address> addressList =new ArrayList<>();
+            addressList=geocoder.getFromLocationName(search_string,1);
+            if(addressList.size()>0){
+                Address address = addressList.get(0);
+                LatLng latLng=new LatLng(address.getLatitude(),address.getLongitude());
+                setLatitude(latLng.latitude);setLongitude(latLng.longitude);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                Log.i("Tag",address.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 }

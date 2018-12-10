@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "282865209088",
+    "firebase_url": "https://planar-outpost-217020.firebaseio.com",
+    "project_id": "planar-outpost-217020",
+    "storage_bucket": "planar-outpost-217020.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282865209088:android:3aa37271ac907499",
+        "android_client_info": {
+          "package_name": "com.example.bahaa.trackme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "282865209088-spgs1mmps8tojrnjd2r2uso8na90qsoh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bahaa.trackme",
+            "certificate_hash": "2d5b2294ff892d15c4a4c3f114ac452abec90a7e"
+          }
+        },
+        {
+          "client_id": "282865209088-mhhoj63cf8c7eu3nc84o4b3o2d2g91rp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bahaa.trackme",
+            "certificate_hash": "23709f3b2a125f36bee773fb0940e443fbeaa5e9"
+          }
+        },
+        {
+          "client_id": "282865209088-ft7nvcugjj782s2r0iie1jab3lvg7kfk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjJe79K5TIukt8pae9ap4pVocrW4r-fpg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "282865209088-ft7nvcugjj782s2r0iie1jab3lvg7kfk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
