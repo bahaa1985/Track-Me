@@ -13,4 +13,11 @@
     <string name="home_address">موقعك الحالي هو:</string>
     <string name="home_ques">هل العلامة على الخريطة تشير لموقع منزلك؟ إن لم تكن كذلك قم بتحديد موقع منزلك من خلال الخريطة و النقر على الموقع فقط أو من خلال البحث بالعنوان ثم الضغط على زر الإدخال في لوحة المفاتيح</string>
     <string name="home_hint">أدخل العنوان او الرقم البريدي أو المدينة</string>
+    <string name="away_ques">حدد موقع أنت معتاد على الذهاب إليه ( مثلاً العمل، المدرسة ...)"</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

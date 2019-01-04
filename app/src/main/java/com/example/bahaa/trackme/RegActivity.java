@@ -1,18 +1,23 @@
 package com.example.bahaa.trackme;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.regex.Pattern;
 
 public class RegActivity extends AppCompatActivity {
 
-
     private EditText mEditName,mEditPhone,mEditEmail,mEditPass,mEditConPass;
+    String name,email,phone,pass,conPass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +37,7 @@ public class RegActivity extends AppCompatActivity {
         else{
             isValidated=true;
             mEditName.setError(null);
+            name=mEditName.getText().toString();
         }
         return  isValidated;
     }
@@ -46,6 +52,7 @@ public class RegActivity extends AppCompatActivity {
         {
             mEditPhone.setError(null);
             isValidated=true;
+            phone=mEditPhone.getText().toString();
         }
         return isValidated;
     }
@@ -59,6 +66,7 @@ public class RegActivity extends AppCompatActivity {
         else{
             mEditEmail.setError(null);
             isValidate=true;
+            email=mEditEmail.getText().toString();
         }
         return isValidate;
     }
@@ -78,7 +86,6 @@ public class RegActivity extends AppCompatActivity {
     }
     private Boolean validateConPassWord(){
         Boolean isValidate;
-        String pass,conPass;
         pass=mEditConPass.getText().toString();
         conPass=mEditPass.getText().toString();
         if(!pass.equals(conPass)){
@@ -88,18 +95,28 @@ public class RegActivity extends AppCompatActivity {
         else {
             isValidate=true;
             mEditConPass.setError(null);
+            pass=mEditPass.getText().toString();
         }
         return isValidate;
     }
 
     public void buttonNext1_Click(View view) {
-        if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
-            Intent intent=new Intent(this,PhotoActivity.class);
-            startActivity(intent);
-        }
-        else
-        {
+        try {
+            if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
+                Intent intent=new Intent(this,PhotoActivity.class);
+                intent.putExtra("name",name);
+                intent.putExtra("email",email);
+                intent.putExtra("phone",phone);
+                intent.putExtra("pass",pass);
+                startActivity(intent);
+            }
+            else
+            {
 
+            }
+        }
+        catch (Exception e) {
+            Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
         }
 
     }

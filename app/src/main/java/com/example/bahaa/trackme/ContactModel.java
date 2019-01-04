@@ -1,17 +1,14 @@
 package com.example.bahaa.trackme;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
 
-import java.util.List;
+public class ContactModel {
 
-public class ContactModel{
-
+    private String mConId;
     private String mConName;
     private String mConNum;
+    private String mConNumMobile;
+    private String mConNumWork;
     private Uri mConImage;
 
     public String getConName() {
@@ -22,12 +19,12 @@ public class ContactModel{
         this.mConName = mConName;
     }
 
-    public String getConNum() {
+    public String getConNumHome() {
         return mConNum;
     }
 
-    public void setConNum(String mConNum) {
-        this.mConNum = mConNum;
+    public void setConNumHome(String mConNumHome) {
+        this.mConNum = mConNumHome;
     }
 
     public Uri getConImage() {
@@ -36,5 +33,29 @@ public class ContactModel{
 
     public void setConImage(Uri mConImage) {
         this.mConImage = mConImage;
+    }
+
+    public String getmConId() {
+        return mConId;
+    }
+
+    public void setmConId(String mConId) {
+        this.mConId = mConId;
+    }
+
+    public String getmConNumMobile() {
+        return mConNumMobile;
+    }
+
+    public void setmConNumMobile(String mConNuMobile) {
+        this.mConNumMobile = mConNuMobile;
+    }
+
+    public String getmConNumWork() {
+        return mConNumWork;
+    }
+
+    public void setmConNumWork(String mConNumWork) {
+        this.mConNumWork = mConNumWork;
     }
 }

@@ -4,17 +4,16 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -34,21 +33,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,GoogleApiClient.OnConnectionFailedListener {
+public class AwayMap extends FragmentActivity implements OnMapReadyCallback ,GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
     private LocationIdentifier locationIdentifier;
     boolean mLocationPermissionGranted;
@@ -59,16 +45,15 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
     ImageView mImageLocation;
     LatLng latLng;
     LatLngBounds mLatLngBounds;
-
     @SuppressLint("MissingPermission")
     @Override
     @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_map);
-        setTitle("حدد موقع منزلك");
-        mAutocompletePlace = findViewById(R.id.autocomplete_text_places);
+        setContentView(R.layout.activity_away_map);
+        setTitle("حدد موقع أنت معتاد على الذهاب إليه ( مثلاً العمل، المدرسة ...)");
 
+        mAutocompletePlace = findViewById(R.id.autocomplete_text_places);
         /*get user's current location*/
         locationIdentifier = new LocationIdentifier(this);
         mLocationPermissionGranted = locationIdentifier.getLocationPermission();
@@ -117,6 +102,20 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
             }
         });
     }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        mGoogleApiClient.stopAutoManage(this);
+//        mGoogleApiClient.disconnect();
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        mGoogleApiClient.stopAutoManage(this);
+//        mGoogleApiClient.disconnect();
+//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -189,73 +188,15 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
 
     }
 
-    String name,email,phone,pass,photoUrl;
-    ArrayList<String> users_Ids=new ArrayList<>();
-    Uri mImageUri;
-    private StorageReference mStorageRef;
-    ArrayList<Double> fireLatLng=new ArrayList<>();
-    public void buttonNext3_Click(View view) {
+    public void buttonNext4_Click(View view) {
         try{
             Intent intent=new Intent(this,MainActivity.class);
-//            ////////
-            name=getIntent().getStringExtra("name");
-            email=getIntent().getStringExtra("email");
-            pass=getIntent().getStringExtra("pass");
-            phone=getIntent().getStringExtra("phone");
-            users_Ids=getIntent().getStringArrayListExtra("following");
-            mImageUri=(Uri)getIntent().getExtras().get("photo");
-//            mImageUri=Uri.fromFile(new File("/home/bahaa/Documents/aser_bahaa.jpg"));
-            fireLatLng.add(locationIdentifier.getLatitude());
-            fireLatLng.add(locationIdentifier.getLongitude());
-            //upload user photo to firebase and retrieve the url:
-            mStorageRef = FirebaseStorage.getInstance().getReference("userImage");
-            StorageReference photoRef=mStorageRef.child(name+".jpeg");
-            photoRef.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
-                            photoUrl=downloadUrl.getResult().toString();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-//                            Toast.makeText(,e.getMessage(),Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-            //save user to firestore database:
-//            FirebaseFirestore db = FirebaseFirestore.getInstance();
-//            Map<String,Object> user=new HashMap<>();
-//            user.put("name",name);
-//            user.put("email",email);
-//            user.put("pass",pass);
-//            user.put("phoneNum",phone);
-//            user.put("imageUrl",photoUrl);
-//            user.put("following",users_Ids);
-//            user.put("homeCoor",fireLatLng);
-//            // Add a new document with a generated ID:
-//            db.collection("users")
-//                    .add(user)
-//                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                        @Override
-//                        public void onSuccess(DocumentReference documentReference) {
-//                            Log.i("new user", "DocumentSnapshot added with ID: " + documentReference.getId());
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Log.e("user error", "Error adding document", e);
-//                        }
-//                    });
-
-            //start the main activity:
+            intent.putExtras(getIntent());
+            intent.putExtra("away",new double[]{locationIdentifier.getLongitude(),locationIdentifier.getLatitude()});
             startActivity(intent);
         }
-        catch (Exception ex){
-            Toast.makeText(this,ex.getMessage(),Toast.LENGTH_SHORT).show();
+        catch (Exception e){
+            Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
         }
     }
 }

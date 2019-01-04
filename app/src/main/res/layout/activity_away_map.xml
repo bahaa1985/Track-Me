@@ -80,13 +80,14 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:paddingBottom="4dp"
-        android:text="@string/home_ques"
+        android:text="@string/away_ques"
         android:textSize="12sp"
-        map:layout_constraintBottom_toTopOf="@id/buttonNext3"
+        map:layout_constraintBottom_toTopOf="@id/buttonNext4"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent" />
+
     <Button
-        android:id="@+id/buttonNext3"
+        android:id="@+id/buttonNext4"
         style="@style/buttonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,6 +98,6 @@
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
         android:text="@string/nextStr"
-        android:onClick="buttonNext3_Click"/>
+        android:onClick="buttonNext4_Click"/>
 
 </android.support.constraint.ConstraintLayout>

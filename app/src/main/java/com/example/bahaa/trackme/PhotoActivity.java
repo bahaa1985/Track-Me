@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -46,7 +47,14 @@ public class PhotoActivity extends AppCompatActivity {
     }
 
     public void buttonNext2_Click(View view) {
-        Intent intent=new Intent(this,ContactsActivity.class);
-        startActivity(intent);
+        try{
+            Intent intent=new Intent(this,ContactsActivity.class);
+            intent.putExtras(getIntent().getExtras());
+            intent.putExtra("photo",mImageUri);
+            startActivity(intent);
+        }
+        catch (Exception e){
+            Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
     }
 }

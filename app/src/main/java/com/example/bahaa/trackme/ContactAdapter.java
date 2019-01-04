@@ -9,6 +9,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +32,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
     @Override
     public void onBindViewHolder(@NonNull ContactHelper contactHelper, int position) {
         ContactModel contact=contacts.get(position);
-        contactHelper.conImage.setImageURI(contact.getConImage());
+        Picasso.get().load(contact.getConImage()).into(contactHelper.conImage);
+        //contactHelper.conImage.setImageURI(contact.getConImage());
         contactHelper.conName.setText(contact.getConName());
-        //contactHelper.conNum.setText(contact.getConNum());
+        contactHelper.conNum.setText(contact.getmConNumWork());
     }
 
     @Override
@@ -44,12 +47,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
 
     class ContactHelper extends RecyclerView.ViewHolder{
 
-        ImageView conImage;TextView conName,conNum;CheckBox conCheckBox;
+        ImageView conImage;TextView conName, conNum;
+        //CheckBox conCheckBox;
         public ContactHelper(@NonNull View itemView) {
             super(itemView);
             conImage=itemView.findViewById(R.id.contactImage);
             conName=itemView.findViewById(R.id.contactName);
-            conCheckBox=itemView.findViewById(R.id.contactCheckBox);
+            conNum=itemView.findViewById(R.id.contactNum);
+            //conCheckBox=itemView.findViewById(R.id.contactCheckBox);
         }
     }
 }
