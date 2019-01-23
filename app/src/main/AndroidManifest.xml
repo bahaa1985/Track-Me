@@ -17,14 +17,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".RegActivity">
-        </activity>
-        <activity android:name=".PhotoActivity" />
-        <activity android:name=".ContactsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".PhotoActivity">
+
+        </activity>
+        <activity android:name=".ContactsActivity">
+
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -38,12 +41,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".HomeMap"></activity>
-        <activity android:name=".AwayMap"></activity>
+        <activity android:name=".HomeMap" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".FirebaseJsonActivity"></activity>
     </application>
 
 </manifest>

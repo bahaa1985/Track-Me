@@ -6,7 +6,7 @@
     <string name="conPassStr">تأكيد كلمة المرور</string>
     <string name="emailStr">الإيميل</string>
     <string name="nextStr">التالي</string>
-    <string name="uploadStr">او إرفع صورة</string>
+    <string name="uploadStr">إرفع صورة</string>
     <string name="pickStr">إختر صورة</string>
     <string name="title_activity_home_map">حدد موقع منزلك</string>
     <string name="check_home_address">عنوانك الحالي هو:</string>

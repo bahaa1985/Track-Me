@@ -102,18 +102,18 @@ public class RegActivity extends AppCompatActivity {
 
     public void buttonNext1_Click(View view) {
         try {
-            if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
+//            if(validateName() && validateEmail() && validatePhone() && validatePassWord() && validateConPassWord()){
                 Intent intent=new Intent(this,PhotoActivity.class);
-                intent.putExtra("name",name);
-                intent.putExtra("email",email);
-                intent.putExtra("phone",phone);
-                intent.putExtra("pass",pass);
+                intent.putExtra("name","bahaa");
+                intent.putExtra("email","bahaa@gmail.com");
+                intent.putExtra("phone","01221483799");
+                intent.putExtra("pass","opopop0");
                 startActivity(intent);
-            }
-            else
-            {
-
-            }
+//            }
+//            else
+//            {
+//
+//            }
         }
         catch (Exception e) {
             Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();

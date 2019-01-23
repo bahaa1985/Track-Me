@@ -1,17 +1,15 @@
 package com.example.bahaa.trackme;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,21 +22,12 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ContactsActivity extends AppCompatActivity {
 
@@ -115,6 +104,7 @@ public class ContactsActivity extends AppCompatActivity {
     List<ContactModel> appContacts=new ArrayList<>();
     List<QueryDocumentSnapshot> fireUsers;
     String conNum,homeId,mobileId,workId,fireId,fireNum;Uri imageUrl;
+    ArrayList<Bitmap> followings_Photos=new ArrayList<>();
     private List<QueryDocumentSnapshot> contactsFromFirebase(){
         try {
             fireUsers = new ArrayList<>();
@@ -123,48 +113,44 @@ public class ContactsActivity extends AppCompatActivity {
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            fireUsers.add(document);
-                        }
-                        if(fireUsers.size()>0){
-                            showContacts();//get phone's contacts
-                            //compare device's contacts and firestore users:
-                            for(int i=0;i<fireUsers.size();i++){
-                                fireId=fireUsers.get(i).getId();
-                                fireNum=fireUsers.get(i).getData().get("phoneNum").toString();
-                                imageUrl=Uri.parse(fireUsers.get(i).getData().get("imageUrl").toString());
-                                Log.i("fire", fireUsers.get(i).getData().get("name").toString());
-                                Log.i("fireNum", fireUsers.get(i).getData().get("phoneNum").toString());
-                                for(int n=0;n<deviceContacts.size();n++){
-                                    conNum=deviceContacts.get(n).getConNumHome();
-    //                                mobileId=deviceContacts.get(n).getmConNumMobile();
-    //                                workId=deviceContacts.get(n).getmConNumWork();
-                                    if(conNum.equals(fireNum)){
-                                        //add user's Id and photo url to the list which will be displayed:
-                                        deviceContacts.get(n).setmConId(fireId);
-                                        deviceContacts.get(n).setConImage(imageUrl);
-                                        appContacts.add(deviceContacts.get(n));
-    //                                    Log.i("device", deviceContacts.get(n).getConName());
-    //                                    Log.i("deviceNum", deviceContacts.get(n).getConNumHome()+"_"+ deviceContacts.get(n).getmConNumMobile()+"_"
-                                                //+deviceContacts.get(n).getmConNumWork());
-                                        break;
-                                    }
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        fireUsers.add(document);
+                    }
+                    if(fireUsers.size()>0){
+                        showContacts();//get phone's contacts
+                        //compare device's contacts and firestore users:
+                        for(int i=0;i<fireUsers.size();i++){
+                            fireId=fireUsers.get(i).getId();
+                            fireNum=fireUsers.get(i).getData().get("phoneNum").toString();
+                            imageUrl=Uri.parse(fireUsers.get(i).getData().get("imageUrl").toString());
+                            Log.i("fire", fireUsers.get(i).getData().get("name").toString());
+                            Log.i("fireNum", fireUsers.get(i).getData().get("phoneNum").toString());
+                            for(int n=0;n<deviceContacts.size();n++){
+                                conNum=deviceContacts.get(n).getConNumHome();
+//                                mobileId=deviceContacts.get(n).getmConNumMobile();
+//                                workId=deviceContacts.get(n).getmConNumWork();
+                                if(conNum.equals(fireNum)){
+                                    //add user's Id and photo url to the list which will be displayed:
+                                    deviceContacts.get(n).setmConId(fireId);
+                                    deviceContacts.get(n).setConImage(imageUrl);
+                                    appContacts.add(deviceContacts.get(n));
+
+                                    break;
                                 }
                             }
-                            //display the contacts whose using the app:
-                            RecyclerView recyclerView=findViewById(R.id.contacts_recycler);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(ContactsActivity.this));
-                            recyclerView.setHasFixedSize(true);
-                            ContactAdapter conAdapter=new ContactAdapter(appContacts);
-                            recyclerView.setAdapter(conAdapter);
-                            recyclerView.addItemDecoration(new DividerItemDecoration(ContactsActivity.this,1));
-                            progressBar.setVisibility(View.INVISIBLE);
                         }
+                        //display the contacts whose using the app:
+                        RecyclerView recyclerView=findViewById(R.id.contacts_recycler);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(ContactsActivity.this));
+                        recyclerView.setHasFixedSize(true);
+                        ContactAdapter conAdapter=new ContactAdapter(appContacts,getApplicationContext());
+                        recyclerView.setAdapter(conAdapter);
+                        followings_Photos=conAdapter.followings_photos;
+                        recyclerView.addItemDecoration(new DividerItemDecoration(ContactsActivity.this,1));
+
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
-                    else {
-                        Toast.makeText(ContactsActivity.this,"failed to get users from database",Toast.LENGTH_SHORT).show();
-                    }
+
                 }
             });
         } catch (Exception e) {
@@ -188,15 +174,26 @@ public class ContactsActivity extends AppCompatActivity {
             }
         }
     }
-    ArrayList<String> users_Ids=new ArrayList<>();
+    ArrayList<String> following_Ids=new ArrayList<>();
+    ArrayList<String> following_names=new ArrayList<>();
+    ArrayList<String> following_phones=new ArrayList<>();
+    ArrayList<String> following_photos=new ArrayList<>();
     public void buttonNext2_Click(View view) {
         try {
             Intent intent = new Intent(this,HomeMap.class);
             intent.putExtras(getIntent());
             for (int i=0;i<appContacts.size();i++) {
-                users_Ids.add(appContacts.get(i).getmConId());
+                following_Ids.add(appContacts.get(i).getmConId());
+                following_names.add(appContacts.get(i).getConName());
+                following_phones.add(appContacts.get(i).getConNumHome());
+                following_photos.add(appContacts.get(i).getConImage().toString());
             }
-            intent.putStringArrayListExtra("following",users_Ids);
+
+            intent.putStringArrayListExtra("following_Ids",following_Ids);
+            intent.putStringArrayListExtra("following_names",following_names);
+            intent.putStringArrayListExtra("following_phones",following_phones);
+            intent.putExtra("followings_Photos",followings_Photos);
+
             startActivity(intent);
         } catch (Exception e) {
             Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();

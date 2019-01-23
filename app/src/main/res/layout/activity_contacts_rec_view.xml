@@ -23,10 +23,11 @@
 
         <ImageView
             android:id="@+id/contactImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:scaleType="fitXY"
-            tools:srcCompat="@tools:sample/avatars[6]" />
+            tools:srcCompat="@tools:sample/avatars[6]"
+            android:layout_margin="4dp"/>
 
         <TextView
             android:id="@+id/contactName"
@@ -36,7 +37,8 @@
             android:gravity="center_vertical|right"
             android:text="TextView"
             android:textSize="16dp"
-            android:paddingRight="8dp"/>
+            android:paddingRight="8dp"
+            android:layout_margin="4dp"/>
 
         <TextView
             android:id="@+id/contactNum"
@@ -46,12 +48,14 @@
             android:gravity="center_vertical|right"
             android:text="TextView"
             android:textSize="16dp"
-            android:paddingRight="8dp"/>
+            android:paddingRight="8dp"
+            android:layout_margin="4dp"/>
 
         <CheckBox
             android:id="@+id/contactCheckBox"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"/>
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

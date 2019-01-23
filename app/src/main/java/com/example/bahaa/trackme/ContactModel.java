@@ -1,5 +1,6 @@
 package com.example.bahaa.trackme;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 public class ContactModel {
@@ -10,6 +11,8 @@ public class ContactModel {
     private String mConNumMobile;
     private String mConNumWork;
     private Uri mConImage;
+    private Bitmap mConBitmap;
+    private boolean mIsSelected;
 
     public String getConName() {
         return mConName;
@@ -57,5 +60,21 @@ public class ContactModel {
 
     public void setmConNumWork(String mConNumWork) {
         this.mConNumWork = mConNumWork;
+    }
+
+    public Bitmap getConBitmap() {
+        return mConBitmap;
+    }
+
+    public void seConBitmap(Bitmap ConBitmap) {
+        this.mConBitmap = ConBitmap;
+    }
+
+    public boolean isSelected() {
+        return mIsSelected;
+    }
+
+    public void setIsSelected(boolean IsSelected) {
+        this.mIsSelected = IsSelected;
     }
 }

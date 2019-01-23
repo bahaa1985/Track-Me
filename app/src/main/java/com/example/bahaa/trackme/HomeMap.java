@@ -4,6 +4,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.ImageWriter;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -42,11 +46,28 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.squareup.picasso.Downloader;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
@@ -189,68 +210,15 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
 
     }
 
-    String name,email,phone,pass,photoUrl;
-    ArrayList<String> users_Ids=new ArrayList<>();
-    Uri mImageUri;
-    private StorageReference mStorageRef;
-    ArrayList<Double> fireLatLng=new ArrayList<>();
+   double[] userLatLng=new double[2];
     public void buttonNext3_Click(View view) {
         try{
-            Intent intent=new Intent(this,MainActivity.class);
-//            ////////
-            name=getIntent().getStringExtra("name");
-            email=getIntent().getStringExtra("email");
-            pass=getIntent().getStringExtra("pass");
-            phone=getIntent().getStringExtra("phone");
-            users_Ids=getIntent().getStringArrayListExtra("following");
-            mImageUri=(Uri)getIntent().getExtras().get("photo");
-//            mImageUri=Uri.fromFile(new File("/home/bahaa/Documents/aser_bahaa.jpg"));
-            fireLatLng.add(locationIdentifier.getLatitude());
-            fireLatLng.add(locationIdentifier.getLongitude());
-            //upload user photo to firebase and retrieve the url:
-            mStorageRef = FirebaseStorage.getInstance().getReference("userImage");
-            StorageReference photoRef=mStorageRef.child(name+".jpeg");
-            photoRef.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
-                            photoUrl=downloadUrl.getResult().toString();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-//                            Toast.makeText(,e.getMessage(),Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            userLatLng[0]=locationIdentifier.getLatitude();
+            userLatLng[1]=locationIdentifier.getLongitude();
 
-            //save user to firestore database:
-//            FirebaseFirestore db = FirebaseFirestore.getInstance();
-//            Map<String,Object> user=new HashMap<>();
-//            user.put("name",name);
-//            user.put("email",email);
-//            user.put("pass",pass);
-//            user.put("phoneNum",phone);
-//            user.put("imageUrl",photoUrl);
-//            user.put("following",users_Ids);
-//            user.put("homeCoor",fireLatLng);
-//            // Add a new document with a generated ID:
-//            db.collection("users")
-//                    .add(user)
-//                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                        @Override
-//                        public void onSuccess(DocumentReference documentReference) {
-//                            Log.i("new user", "DocumentSnapshot added with ID: " + documentReference.getId());
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Log.e("user error", "Error adding document", e);
-//                        }
-//                    });
-
+            Intent intent=new Intent(this,FirebaseJsonActivity.class);
+            intent.putExtras(getIntent());
+            intent.putExtra("userLatLng",userLatLng);
             //start the main activity:
             startActivity(intent);
         }
