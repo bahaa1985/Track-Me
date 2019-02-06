@@ -10,8 +10,9 @@ public class ContactModel {
     private String mConNum;
     private String mConNumMobile;
     private String mConNumWork;
+    private String mConImageName;
     private Uri mConImage;
-    private Bitmap mConBitmap;
+    private byte[] bytes;
     private boolean mIsSelected;
 
     public String getConName() {
@@ -62,12 +63,12 @@ public class ContactModel {
         this.mConNumWork = mConNumWork;
     }
 
-    public Bitmap getConBitmap() {
-        return mConBitmap;
+    public byte[] getConBitmap() {
+        return bytes;
     }
 
-    public void seConBitmap(Bitmap ConBitmap) {
-        this.mConBitmap = ConBitmap;
+    public void setConBitmap(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     public boolean isSelected() {
@@ -76,5 +77,13 @@ public class ContactModel {
 
     public void setIsSelected(boolean IsSelected) {
         this.mIsSelected = IsSelected;
+    }
+
+    public String getConImageName() {
+        return mConImageName;
+    }
+
+    public void setConImageName(String mConImageName) {
+        this.mConImageName = mConImageName;
     }
 }

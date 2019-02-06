@@ -58,7 +58,7 @@ public class LocationIdentifier extends FragmentActivity {
             }
 
         } catch (Exception e) {
-            Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_SHORT).show();
         }
         return mLocationPermissionGranted;
     }

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -26,6 +27,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +37,7 @@ public class ContactsActivity extends AppCompatActivity {
     List<ContactModel> deviceContacts=new ArrayList<>();
     FirebaseFirestore db;
     ProgressBar progressBar;
-
+    RecyclerView recyclerView ;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,18 +45,17 @@ public class ContactsActivity extends AppCompatActivity {
 
         progressBar=findViewById(R.id.progressContacts);
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                progressBar.setVisibility(View.VISIBLE);
+//            }
+//        });
 
         contactsFromFirebase();
     }
 
     String conID,conName,conHome,conMobile,conWork;
-    boolean isExisted;int phoneType;
     void showContacts(){
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -101,10 +103,10 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
-    List<ContactModel> appContacts=new ArrayList<>();
+
+    List<ContactModel> appContacts=new ArrayList<>();ArrayList<byte[]> appContacts_limited=new ArrayList<>();
     List<QueryDocumentSnapshot> fireUsers;
-    String conNum,homeId,mobileId,workId,fireId,fireNum;Uri imageUrl;
-    ArrayList<Bitmap> followings_Photos=new ArrayList<>();
+    String conNum,homeId,mobileId,workId,fireId,fireNum,fireImageName;Uri imageUrl;
     private List<QueryDocumentSnapshot> contactsFromFirebase(){
         try {
             fireUsers = new ArrayList<>();
@@ -113,46 +115,49 @@ public class ContactsActivity extends AppCompatActivity {
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        fireUsers.add(document);
-                    }
-                    if(fireUsers.size()>0){
-                        showContacts();//get phone's contacts
-                        //compare device's contacts and firestore users:
-                        for(int i=0;i<fireUsers.size();i++){
-                            fireId=fireUsers.get(i).getId();
-                            fireNum=fireUsers.get(i).getData().get("phoneNum").toString();
-                            imageUrl=Uri.parse(fireUsers.get(i).getData().get("imageUrl").toString());
-                            Log.i("fire", fireUsers.get(i).getData().get("name").toString());
-                            Log.i("fireNum", fireUsers.get(i).getData().get("phoneNum").toString());
-                            for(int n=0;n<deviceContacts.size();n++){
-                                conNum=deviceContacts.get(n).getConNumHome();
-//                                mobileId=deviceContacts.get(n).getmConNumMobile();
-//                                workId=deviceContacts.get(n).getmConNumWork();
-                                if(conNum.equals(fireNum)){
-                                    //add user's Id and photo url to the list which will be displayed:
-                                    deviceContacts.get(n).setmConId(fireId);
-                                    deviceContacts.get(n).setConImage(imageUrl);
-                                    appContacts.add(deviceContacts.get(n));
+                    if (task.isComplete()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            fireUsers.add(document);
+                        }
+                        if (fireUsers.size() > 0) {
+                            showContacts();//get phone's contacts
+                            //compare device's contacts and firestore users:
+                            for (int i = 0; i < fireUsers.size(); i++) {
+                                fireId = fireUsers.get(i).getId();
+                                fireNum = fireUsers.get(i).getData().get("phoneNum").toString();
+                                fireImageName=fireUsers.get(i).getData().get("imageName").toString();
+                                imageUrl = Uri.parse(fireUsers.get(i).getData().get("imageUrl").toString());
 
-                                    break;
+                                Log.i("fire", fireUsers.get(i).getData().get("name").toString());
+                                Log.i("fireNum", fireUsers.get(i).getData().get("phoneNum").toString());
+
+                                for (int n = 0; n < deviceContacts.size(); n++) {
+                                    conNum = deviceContacts.get(n).getConNumHome();
+                                    if (conNum.equals(fireNum)) {
+                                        //add user's Id and photo url to the list which will be displayed:
+                                        deviceContacts.get(n).setmConId(fireId);
+                                        deviceContacts.get(n).setConImageName(fireImageName);
+                                        deviceContacts.get(n).setConImage(imageUrl);
+                                        appContacts.add(deviceContacts.get(n));
+
+                                        break;
+                                    }
                                 }
                             }
+//                            progressBar.setVisibility(View.INVISIBLE);
+                            //display the contacts whose using the app:
+                            recyclerView = findViewById(R.id.contacts_recycler);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ContactsActivity.this));
+                            recyclerView.setHasFixedSize(true);
+                            ContactAdapter conAdapter = new ContactAdapter( appContacts,progressBar);
+                            appContacts_limited= conAdapter.photos_bytes;
+                            recyclerView.setAdapter(conAdapter);
+                            recyclerView.addItemDecoration(new DividerItemDecoration(ContactsActivity.this, 1));
                         }
-                        //display the contacts whose using the app:
-                        RecyclerView recyclerView=findViewById(R.id.contacts_recycler);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(ContactsActivity.this));
-                        recyclerView.setHasFixedSize(true);
-                        ContactAdapter conAdapter=new ContactAdapter(appContacts,getApplicationContext());
-                        recyclerView.setAdapter(conAdapter);
-                        followings_Photos=conAdapter.followings_photos;
-                        recyclerView.addItemDecoration(new DividerItemDecoration(ContactsActivity.this,1));
-
-                        progressBar.setVisibility(View.INVISIBLE);
                     }
-
                 }
             });
+
         } catch (Exception e) {
             Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
         }
@@ -161,6 +166,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
         return fireUsers;
     }
+
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -174,30 +180,43 @@ public class ContactsActivity extends AppCompatActivity {
             }
         }
     }
+
     ArrayList<String> following_Ids=new ArrayList<>();
     ArrayList<String> following_names=new ArrayList<>();
     ArrayList<String> following_phones=new ArrayList<>();
+    ArrayList<byte[]> following_bytes=new ArrayList<>();
     ArrayList<String> following_photos=new ArrayList<>();
     public void buttonNext2_Click(View view) {
         try {
-            Intent intent = new Intent(this,HomeMap.class);
-            intent.putExtras(getIntent());
-            for (int i=0;i<appContacts.size();i++) {
-                following_Ids.add(appContacts.get(i).getmConId());
-                following_names.add(appContacts.get(i).getConName());
-                following_phones.add(appContacts.get(i).getConNumHome());
-                following_photos.add(appContacts.get(i).getConImage().toString());
-            }
+                for(int i=0;i<appContacts_limited.size();i++){
+                    appContacts.get(i).setConBitmap(appContacts_limited.get(i));
+                }
+                //////
+                Intent intent = new Intent(this,FirebaseJsonActivity.class);
+                intent.putExtras(getIntent());
+                for (int i=0;i<appContacts.size();i++) {
+                    if(appContacts.get(i).isSelected()) {
+                        following_Ids.add(appContacts.get(i).getmConId());
+                        following_names.add(appContacts.get(i).getConName());
+                        following_phones.add(appContacts.get(i).getConNumHome());
+                        following_photos.add(appContacts.get(i).getConImageName());
+//                        following_bytes.add(appContacts.get(i).getConBitmap());
 
-            intent.putStringArrayListExtra("following_Ids",following_Ids);
-            intent.putStringArrayListExtra("following_names",following_names);
-            intent.putStringArrayListExtra("following_phones",following_phones);
-            intent.putExtra("followings_Photos",followings_Photos);
+                    }
 
-            startActivity(intent);
-        } catch (Exception e) {
-            Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+                if(following_Ids.size()>0) {
+                    intent.putStringArrayListExtra("following_Ids", following_Ids);
+                    intent.putStringArrayListExtra("following_names", following_names);
+                    intent.putStringArrayListExtra("following_phones", following_phones);
+                    intent.putStringArrayListExtra("following_photos",following_photos);
+                    startActivity(intent);
+                }
         }
+        catch (Exception e) {
+                Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 }
