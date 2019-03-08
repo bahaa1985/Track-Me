@@ -5,6 +5,7 @@
     android:id="@+id/firebase_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="rtl"
     android:configChanges="orientation|screenSize"
     tools:context=".FirebaseJsonActivity">
 
@@ -40,7 +41,7 @@
         android:enabled="true"
         android:onClick="button_next4_click"
         android:text="@string/nextStr"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

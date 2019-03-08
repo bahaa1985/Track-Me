@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    android:background="@android:color/holo_green_dark">
+
+
+    <RelativeLayout
+        android:id="@+id/layout_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_view_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="@string/text_from" />
+
+        <TextView
+            android:id="@+id/text_view_from_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_toEndOf="@id/text_view_from"
+            android:text="@string/text_view_location"
+            android:textColor="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/text_view_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_view_from_location"
+            android:layout_margin="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/text_to" />
+
+        <Spinner
+            android:id="@+id/spinner_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_from"
+            android:layout_margin="4dp"
+            android:layout_toEndOf="@id/text_view_to"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name" />
+
+        <TextView
+            android:id="@+id/text_view_google"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinner_location"
+            android:layout_margin="4dp"
+            android:onClick="on_text_view_google_click"
+            android:text="@string/text_googlemap" />
+
+        <TextView
+            android:id="@+id/text_view_destination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_google"
+            android:layout_margin="4dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/edit_text_destination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_destination"
+            android:layout_margin="4dp"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+
+        <Switch
+            android:id="@+id/switch_undetermined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_text_destination"
+            android:layout_margin="4dp"
+            android:text="@string/switch_undetermined" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/button_start_trip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_location">
+
+        <Switch
+            android:id="@+id/switch_notify_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/switch_notify_all" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rec_view_trip_contacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/switch_notify_all"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/button_start_trip"
+        style="@style/buttonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:ems="10"
+        android:onClick="on_button_start_trip_click"
+        android:text="@string/button_start_trip"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_contacts" />
+</android.support.constraint.ConstraintLayout>

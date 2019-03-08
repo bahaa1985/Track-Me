@@ -1,5 +1,6 @@
 package com.example.bahaa.trackme;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -68,15 +69,15 @@ public class FirebaseJsonActivity extends AppCompatActivity {
             }
         });
 
-        if(isCreated==false) {
-            try {
-                saveUserFirePhoto();
-                //
-                isCreated = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        if(isCreated==false) {
+//            try {
+//                saveUserFirePhoto();
+//                //
+//                isCreated = true;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     String name,date,time,photoUrl,photo_name,photo_path; Uri mImageUri;
@@ -365,7 +366,8 @@ public class FirebaseJsonActivity extends AppCompatActivity {
 
     public void button_next4_click(View view) {
         try{
-
+            Intent intent=new Intent(this,MainActivity.class);
+            startActivity(intent);;
 
         }
         catch(Exception ex){

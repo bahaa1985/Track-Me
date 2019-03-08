@@ -16,19 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RegActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".PhotoActivity">
-
-        </activity>
-        <activity android:name=".ContactsActivity">
-
-        </activity>
+        <activity android:name=".RegActivity"></activity>
+        <activity android:name=".PhotoActivity"></activity>
+        <activity android:name=".ContactsActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -41,12 +31,25 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".HomeMap" />
+        <activity android:name=".DestinationMap" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FirebaseJsonActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".FirebaseJsonActivity" />
+
+        <activity android:name=".NewTrip"/>
+
+        <service
+            android:name=".NotificationService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

@@ -1,16 +1,10 @@
 package com.example.bahaa.trackme;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,23 +14,15 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.IOException;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactHelper>{
 
@@ -114,8 +100,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
 
     }
 
-
-
     @Override
     public int getItemCount() {
         return contacts.size();
@@ -123,7 +107,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
 
     class ContactHelper extends RecyclerView.ViewHolder{
 
-        ImageView conImage;TextView conName, conNum;
+        ImageView conImage;
+        TextView conName, conNum;
         CheckBox conCheckBox;
         public ContactHelper(@NonNull View itemView) {
             super(itemView);

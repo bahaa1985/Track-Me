@@ -4,17 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.ImageWriter;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,38 +32,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.squareup.picasso.Downloader;
-import com.squareup.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.google.android.gms.maps.model.Marker;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import okhttp3.Request;
-import okhttp3.Response;
-
-public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,GoogleApiClient.OnConnectionFailedListener {
+public class DestinationMap extends FragmentActivity implements OnMapReadyCallback ,GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
     private LocationIdentifier locationIdentifier;
     boolean mLocationPermissionGranted;
@@ -86,10 +53,12 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
     @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_map);
+        setContentView(R.layout.activity_destination_map);
         setTitle("حدد موقع منزلك");
         mAutocompletePlace = findViewById(R.id.autocomplete_text_places);
 
+        userLatLng=getIntent().getDoubleArrayExtra("lat_long");
+        latLng=new LatLng(userLatLng[0],userLatLng[1]);
         /*get user's current location*/
         locationIdentifier = new LocationIdentifier(this);
         mLocationPermissionGranted = locationIdentifier.getLocationPermission();
@@ -99,13 +68,13 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
             mapFragment.getMapAsync(this);
         }
         /*set current location icon event*/
-        mImageLocation=findViewById(R.id.image_View_gps);
-        mImageLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                locationIdentifier.getDeviceLocation(mMap);
-            }
-        });
+//        mImageLocation=findViewById(R.id.image_View_gps);
+//        mImageLocation.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                locationIdentifier.getDeviceLocation(mMap);
+//            }
+//        });
     }
 
     private  void searchForPlace(){
@@ -144,8 +113,9 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
         if (mLocationPermissionGranted) {
-            locationIdentifier.getDeviceLocation(mMap);
+            //locationIdentifier.getDeviceLocation(mMap);
 //           ///*******************
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -158,14 +128,14 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            mMap.setMyLocationEnabled(false);
+            mMap.setMyLocationEnabled(true);
             //
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
                     mMap.clear();
                     // Add a marker in location and move the camera
-                    locationIdentifier.addMarkerinDeviceLocation(latLng);
+                    locationIdentifier.addMarkerinDeviceLocation(latLng,mMap);
                 }
             });
             /*auto complete place search:*/
@@ -199,7 +169,7 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
                 placeLatLng= places.get(0).getLatLng();
                 placeLat=placeLatLng.latitude;placeLong=placeLatLng.longitude;
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLatLng,15));
-                locationIdentifier.addMarkerinDeviceLocation(placeLatLng);
+                locationIdentifier.addMarkerinDeviceLocation(placeLatLng,mMap);
                 places.release();
             }
         }
@@ -215,10 +185,10 @@ public class HomeMap extends FragmentActivity implements OnMapReadyCallback ,Goo
         try{
             userLatLng[0]=locationIdentifier.getLatitude();
             userLatLng[1]=locationIdentifier.getLongitude();
-
-            Intent intent=new Intent(this,FirebaseJsonActivity.class);
-            intent.putExtras(getIntent());
+            String destination=locationIdentifier.geoLocationAddress(userLatLng[0],userLatLng[1]);
+            Intent intent=new Intent(this,NewTrip.class);
             intent.putExtra("userLatLng",userLatLng);
+            intent.putExtra("destination",destination);
             //start the main activity:
             startActivity(intent);
         }
