@@ -24,7 +24,8 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactHelper>{
+public class
+ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactHelper>{
 
     List<ContactModel> contacts=new ArrayList<ContactModel>();
     public ArrayList<byte[]> photos_bytes=new ArrayList<>();

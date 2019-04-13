@@ -1,35 +1,56 @@
 package com.example.bahaa.trackme;
 
 import android.Manifest;
+import android.app.admin.DeviceAdminInfo;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.media.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class NewTrip extends AppCompatActivity implements LocationListener {
     LocationIdentifier locationIdentifier;
@@ -37,14 +58,17 @@ public class NewTrip extends AppCompatActivity implements LocationListener {
     Double latitude, longitude;
     TextView text_view_from_location, text_view_destination;
     Spinner spinner_location;
-    Switch switch_undetermined;
+    Switch switch_undetermined,switch_notify_all;
     String location_address, destination;
+    UserDestinationAdapter user_dest_adapter;
     double[] userLatLng = new double[2];
     final int PERMISSIONS_REQUEST = 1;
     FusedLocationProviderClient mFusedLocationClient;
     LocationManager locationManager;
     String location_provider="network";
-
+    RecyclerView rec_view_trip_contacts;
+    CheckBox contact_checkBox;
+    ArrayList<ContactModel> contacts_arr=new ArrayList<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +77,10 @@ public class NewTrip extends AppCompatActivity implements LocationListener {
         text_view_destination = findViewById(R.id.text_view_destination);
         spinner_location = findViewById(R.id.spinner_location);
         switch_undetermined=findViewById(R.id.switch_undetermined);
+        rec_view_trip_contacts=findViewById(R.id.rec_view_trip_contacts);
+        contact_checkBox=findViewById(R.id.contactCheckBox);
+        switch_notify_all=findViewById(R.id.switch_notify_all);
+        final RecyclerView contacts_recycler;
         //
         locationIdentifier=new LocationIdentifier(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -69,26 +97,101 @@ public class NewTrip extends AppCompatActivity implements LocationListener {
             }
             return;
         }
+
         locationManager.requestLocationUpdates(location_provider, 1000, 1, this);
-//        else {
-//            if(location_permission_granted){
-//
-//            }
-//        }
-        //
+
         if (getIntent() != null) {
             destination = getIntent().getStringExtra("destination");
             text_view_destination.setText(destination);
+            text_view_destination.setVisibility(View.VISIBLE);
         }
         try {
+            //fill spinner:
             getDestinationsList();
+            //
+            if(user_dest_arr.size()>0) {
+                spinner_location = findViewById(R.id.spinner_location);
+                user_dest_adapter = new UserDestinationAdapter(this, user_dest_arr);
+                spinner_location.setAdapter(user_dest_adapter);
+                int initialSelection=spinner_location.getSelectedItemPosition();
+                spinner_location.setSelection(initialSelection,false );
+                spinner_location.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        UserDestination userDestination = (UserDestination) parent.getSelectedItem();
+                        title = userDestination.getTitle();
+                        text_view_destination.setText(title);
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
+            //contacts recycler view:
+            StringBuilder builder1=new StringBuilder();
+            FileInputStream fis=new FileInputStream(getFilesDir().getPath()+"/followings.json");
+            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(fis));
+            ArrayList<String> ids=new ArrayList<>();
+            while(bufferedReader.read()!=-1){
+                builder1.append(bufferedReader.readLine());
+            }
+            bufferedReader.close();
+            JSONObject jsonObject=new JSONObject('{'+builder1.toString()+'}');
+            Iterator<String> itr_string=jsonObject.keys();
+            while(itr_string.hasNext()) {
+                String ss=itr_string.next();
+                ids.add(ss);
+            };
+
+            for(int i=0;i<ids.size();i++)
+            {
+                //JsonObject contact_json=new JsonObject();
+                ContactModel contact=new ContactModel();
+                contact.setmConId(ids.get(i));
+                contact.setConName(jsonObject.getJSONObject(ids.get(i)).getString("following_name"));
+                contact.setConImage(Uri.parse(jsonObject.getJSONObject(ids.get(i)).getString("following_Photo")));
+                contacts_arr.add(contact);
+            }
+
+            contacts_recycler=findViewById(R.id.rec_view_trip_contacts);
+            contacts_recycler.setLayoutManager(new LinearLayoutManager(this));
+            contacts_recycler.setHasFixedSize(true);
+            final ContactTripAdapter contacts_adapter=new ContactTripAdapter(this,contacts_arr);
+            contacts_recycler.setAdapter(contacts_adapter);
+
+            //switchs:
+            switch_notify_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        contacts_adapter.enableOrDisableCheckboxs(true);
+                    }
+                    else{
+                        contacts_adapter.enableOrDisableCheckboxs(false);
+                    }
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //switchs:
 
+        //NotificationService notificationService=new NotificationService();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            text_view_from_location.setBackgroundColor(getColor(R.color.colorAccent));
+            Toast.makeText(this,"is stopped",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -156,18 +259,11 @@ public class NewTrip extends AppCompatActivity implements LocationListener {
         Toast.makeText(this,location_provider+" is disabled",Toast.LENGTH_SHORT).show();
     }
 
-
-
-    public void on_button_start_trip_click(View view) {
-
-    }
-
     InputStream is;
     StringBuilder builder=new StringBuilder();
     Gson gson=new Gson();
     ArrayList<UserDestination> user_dest_arr=new ArrayList<>();
     ArrayList<JSONArray> json_arr=new ArrayList<>();
-    UserDestinationAdapter user_dest_adapter;
     String address,title;
     public void getDestinationsList() throws IOException, JSONException {
 
@@ -176,29 +272,18 @@ public class NewTrip extends AppCompatActivity implements LocationListener {
         while(reader.read()!=-1){
             builder.append(reader.readLine());
        }
-       //JsonReader json_reader=new JsonReader(reader);
-//        JSONArray jsonArray=new JSONArray('{'+builder.toString()+'}');
-//        for (int i=0;i<jsonArray.length();i++){
-//            JSONObject json_dest=new JSONObject();
-//            json_dest=(JSONObject)jsonArray.get(i);
-//            json_oject_arr.add(json_dest);
-//        }
+
+        int dest_count=0;
         JSONObject jsonObject=new JSONObject('{'+builder.toString()+'}');
-        JSONArray json_arr_dest_1=new JSONArray();
-        json_arr_dest_1=jsonObject.getJSONArray("dest_1");
-        JSONArray json_arr_dest_2=new JSONArray();
-        json_arr_dest_2=jsonObject.getJSONArray("dest_2");
-        JSONArray json_arr_dest_3=new JSONArray();
-        json_arr_dest_3=jsonObject.getJSONArray("dest_3");
-        json_arr.add(json_arr_dest_1);
-        json_arr.add(json_arr_dest_2);
-        json_arr.add(json_arr_dest_3);
-//        JSONObject json_dest2=new JSONObject();
-//        json_dest2=jsonObject.getJSONObject("dest2");
-//        json_oject_arr.add(json_dest2);
-//        JSONObject json_dest3=new JSONObject();
-//        json_dest3=jsonObject.getJSONObject("dest3");
-//        json_oject_arr.add(json_dest3);
+        for(int i=jsonObject.length();i>0;i--) {
+            JSONArray json_arr_dest=new JSONArray();
+            json_arr_dest=jsonObject.getJSONArray(String.valueOf(i));
+            json_arr.add(json_arr_dest);
+            dest_count++;
+            if(dest_count==5){
+                break;
+            }
+        }
         ///
         for(int i=0;i<json_arr.size();i++){
             latitude=json_arr.get(i).getDouble(0);
@@ -208,62 +293,19 @@ public class NewTrip extends AppCompatActivity implements LocationListener {
             UserDestination user_dest=new UserDestination(latitude,longitude,address,title);
             user_dest_arr.add(user_dest);
         }
-//
-       spinner_location=findViewById(R.id.spinner_location);
-        user_dest_adapter=new UserDestinationAdapter(this,user_dest_arr);
-        spinner_location.setAdapter(user_dest_adapter);
-        spinner_location.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                UserDestination userDestination=(UserDestination)parent.getSelectedItem();
-                title=userDestination.getTitle();
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        Toast.makeText(this,title,Toast.LENGTH_LONG).show();
+       //Toast.makeText(this,title,Toast.LENGTH_LONG).show();
     }
 
-//        try {
-//            FirebaseMessaging.getInstance().subscribeToTopic("address")
-//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            Log.i("message","message is sent!");
-//
-//                        }
-//                    })
-//                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task) {
-//
-//                        }
-//                    });
-//            FirebaseInstanceId.getInstance().getInstanceId()
-//                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
-//                            if (!task.isSuccessful()) {
-//                                Log.w("instance id", "getInstanceId failed", task.getException());
-//                                return;
-//                            }
-//
-//                            // Get new Instance ID token
-//                            String token = task.getResult().getToken();
-//                            Log.w("instance id", token);
-//
-//                            // Log and toast
-////                            String msg = getString(R.string.msg_token_fmt, token);
-////                            Log.d(TAG, msg);
-////                            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+    public void on_button_start_trip_click(View view) {
+        Intent locationServiceIntent=new Intent(this,LocationService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(this,locationServiceIntent);
+            Toast.makeText(this,"service is started",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            startService(locationServiceIntent);
+            Toast.makeText(this,"service is started",Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

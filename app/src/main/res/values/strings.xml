@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Track me</string>
+    <string name="button_ar">عربي</string>
+    <string name="textView_mode">من سيستخدم هذا التطبيق؟</string>
+    <string name="radio_adult">شخص بالغ (تحكم كامل في البرنامج من أجل تتبع حركة اﻵخرين)</string>
+    <string name="radio_kid">طفل (تحكم بسيط  و واجهة غير معقدة مناسبة للطفل حتى يمكن لوالديه أن يتتبعاه)</string>
+    <string name="button_en">English</string>
     <string name="nameStr">الإسم</string>
     <string name="phoneStr">رقم الهاتف</string>
     <string name="passStr">ادخل كلمة المرور</string>
@@ -23,8 +28,10 @@
     <string name="text_from">من</string>
     <string name="text_to">اختر وجهتك من القائمة</string>
     <string name="text_view_location">موقعك الحالي</string>
+    <string name="edit_text_location_hint">أدخل اسم مناسب لهذا الموقع ( مثلاً : المنزل )</string>
     <string name="text_googlemap">(اضغط هنا)إذا لم يكن الموقع الذي تريد الذهاب إليه موجود في القائمة قم بالبحث عنه في خريطة جوجل </string>
     <string name="switch_undetermined">بدون تحديد جهة وصول</string>
+    <string name="rename_destination_hint">أدخل اسم مناسب لهذا الموقع ( مثلاً : المدرسة/العمل/الكافتيريا )</string>
     <string name="switch_notify_all">إرسال الإشعارات للكل</string>
     <string name="button_start_trip">بدء التحرك</string>
     <string-array name="numbers">

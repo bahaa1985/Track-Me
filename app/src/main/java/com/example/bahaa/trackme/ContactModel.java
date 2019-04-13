@@ -14,6 +14,7 @@ public class ContactModel {
     private Uri mConImage;
     private byte[] bytes;
     private boolean mIsSelected;
+    private ContactTripAdapter.ContactHelper contactHelper;
 
     public String getConName() {
         return mConName;
@@ -75,7 +76,11 @@ public class ContactModel {
         return mIsSelected;
     }
 
-    public void setIsSelected(boolean IsSelected) {
+    public void setIsSelected(boolean IsSelected
+
+
+
+    ) {
         this.mIsSelected = IsSelected;
     }
 

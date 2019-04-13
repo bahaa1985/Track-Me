@@ -19,6 +19,10 @@ public class ContactTripAdapter extends RecyclerView.Adapter<ContactTripAdapter.
 
     Context context;
     List<ContactModel> contacts=new ArrayList<ContactModel>();
+    public ContactTripAdapter(Context context,List<ContactModel> contacts){
+        this.context=context;
+        this.contacts=contacts;
+    }
     @NonNull
     @Override
     public ContactTripAdapter.ContactHelper onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -26,9 +30,24 @@ public class ContactTripAdapter extends RecyclerView.Adapter<ContactTripAdapter.
         return new ContactHelper(view_holder);
     }
 
+
+    public void enableOrDisableCheckboxs(boolean status){
+        if(status==true){
+            for(int i=0;i<checkBoxList.size();i++){
+                checkBoxList.get(i).setChecked(true);
+            }
+        }
+        else{
+            for(int i=0;i<checkBoxList.size();i++){
+                checkBoxList.get(i).setChecked(false);
+            }
+        }
+    }
+
     ContactModel contact;
+    List<CheckBox> checkBoxList=new ArrayList<>();
     @Override
-    public void onBindViewHolder(@NonNull final ContactTripAdapter.ContactHelper contactHelper, int position) {
+    public void onBindViewHolder(@NonNull final ContactTripAdapter.ContactHelper contactHelper, final int position) {
         contact=contacts.get(position);
 
         contactHelper.conImage.setImageURI(contact.getConImage());
@@ -36,32 +55,34 @@ public class ContactTripAdapter extends RecyclerView.Adapter<ContactTripAdapter.
         contactHelper.conName.setText(contact.getConName());
 
         contactHelper.conCheckBox.setTag(position);
+
         contactHelper.conCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 int pos=(int)contactHelper.conCheckBox.getTag();
-//                Toast.makeText(ContactAdapter.class.get,contacts.get(pos).getConName(),Toast.LENGTH_SHORT).show();
                 if(isChecked){
                     contacts.get(pos).setIsSelected(true);
-                    contactHelper.conName.setTextColor(Color.GREEN);
+
                 }
                 else{
                     contacts.get(pos).setIsSelected(false);
-                    contactHelper.conName.setTextColor(Color.BLACK);
+
                 }
             }
         });
+        checkBoxList.add(contactHelper.conCheckBox);
     }
+
 
     @Override
     public int getItemCount() {
-        return 0;
+        return contacts.size();
     }
 
     class ContactHelper extends RecyclerView.ViewHolder{
         ImageView conImage;
         TextView conName;
-        CheckBox conCheckBox;
+        public CheckBox conCheckBox;
         public ContactHelper(@NonNull View itemView) {
             super(itemView);
             conImage=itemView.findViewById(R.id.contactImage);
@@ -69,5 +90,6 @@ public class ContactTripAdapter extends RecyclerView.Adapter<ContactTripAdapter.
             conCheckBox=itemView.findViewById(R.id.contactCheckBox);
 
         }
+
     }
 }

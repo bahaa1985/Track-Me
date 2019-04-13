@@ -4,11 +4,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class NotificationService extends FirebaseMessagingService {
+
+
+
     static final String TAG="NOTIFICATION";
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -26,6 +30,7 @@ public class NotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageSent(String s) {
         super.onMessageSent(s);
+        Toast.makeText(this,"message is sent",Toast.LENGTH_SHORT).show();
     }
 
 }
